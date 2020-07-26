@@ -13,7 +13,7 @@ test('require information from Employee', () => {
 test('check manager for an office number', () => {
     const manager = new Manager ('Ezekiel Max', 1, 'EzMax@somethingmail.com', 1401);
 
-    expect(manager.officeNumber).toBe(1401);
+    expect(manager.officeNumber()).toBe(1401);
 });
 
 // changes role from Employee to Manager
