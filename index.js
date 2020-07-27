@@ -1,20 +1,19 @@
 const fs = require('fs');
 const inquirer = require('inquirer');
 
-const Employee = require('./lib/Employee');
 const Manager = require('./lib/Manager');
 const Engineer = require('./lib/Engineer');
 const Intern = require('./lib/Intern');
 
-const generatePage = require('./src/page-template');
-const { writeFile, copyFile } = require('./utils/generate-site.js');
+const generatePage = require('./src/generate-site');
+// const { writeFile, copyFile } = require('./utils/generate-site.js');
 
 // employee array
-const employees = [];
+const employeesList = [];
 
 // email and number regex
 const emailRegEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-const numRegEx = /^[1-9]*\d$/
+const numRegEx = /^[1-9]*\d$/;
 
 /* array of questions for user */
 // team building prompt
@@ -85,10 +84,10 @@ const teamBuild = () => {
                     name: manager.getName(),
                     id: manager.getID(),
                     email: manager.getEmail(),
-                    number: manager.getOfficeNumber()
+                    extra: manager.getOfficeNumber()
                 };
-                // pushes collected information into the employees array
-                employees.push(managerDisplay);
+                // pushes collected information into the employeesList array
+                employeesList.push(managerDisplay);
                 // runs the team building prompt again to add a new member
                 choicesAvail();
             });
@@ -114,10 +113,11 @@ const choicesAvail = () => {
                 } else if (data.choiceList === 'Intern') {
                     selectIntern();
                 } else {
-                    const pageHTML = generatePage(employees);
+                    const pageHTML = generatePage(employeesList);
                     return writeFile(pageHTML)
                                                 .then((writeFileResponse) => {
                                                     console.log(writeFileResponse);
+                                                    return copyFile(); // missing this return will cause copyFile to become undefined
                                                 })
                                                 .then((copyFileResponse) => {
                                                     console.log(copyFileResponse);
@@ -167,7 +167,7 @@ const selectEngineer = () => {
                     name: 'email',
                     message: "What is the engineer's email address?",
                     validate: (emailInput) => {
-                        if (emailInput.match(numRegEx)) {
+                        if (emailInput.match(emailRegEx)) {
                             return true;
                         } else {
                             console.log("Please enter the engineer's email address.");
@@ -198,10 +198,10 @@ const selectEngineer = () => {
                     name: engineer.getName(),
                     id: engineer.getID(),
                     email: engineer.getEmail(),
-                    github: engineer.getGithub()
+                    extra: engineer.getGithub()
                 };
-                // pushes collected information into the employees array
-                employees.push(engineerDisplay);
+                // pushes collected information into the employeesList array
+                employeesList.push(engineerDisplay);
                 // runs the team building prompt again to add a new member
                 choicesAvail();
             });
@@ -273,13 +273,44 @@ const selectIntern = () => {
                     name: intern.getName(),
                     id: intern.getID(),
                     email: intern.getEmail(),
-                    school: intern.getSchool()
+                    extra: intern.getSchool()
                 };
-                employees.push(internDisplay);
+                employeesList.push(internDisplay);
                 choicesAvail();
             });
 };
 
+const writeFile = fileContent => {
+    return new Promise((resolve, reject) => {
+      fs.writeFile('./dist/index.html', fileContent, err => {
+        if (err) {
+          reject(err);
+          return;
+        }
+  
+        resolve({
+          ok: true,
+          message: 'Your file is done!'
+        });
+      });
+    });
+    
+};
+
+const copyFile = () => {
+    return new Promise((resolve, reject) => {
+        fs.copyFile('./src/style.css', './dist/style.css', err => {
+            if (err) {
+              reject(err);
+              return;
+            }
+            resolve({
+                ok: true,
+                message: 'Successful copy of style sheet complete.'
+            })
+        }); 
+    })
+}
+
 // initialization
-console.log('You will be prompted to enter the details of your team in a moment.')
 teamBuild();
