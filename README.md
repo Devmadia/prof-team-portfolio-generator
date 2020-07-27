@@ -22,9 +22,11 @@
 
   ![Team Portfolio Generator Snapshot](./assets/images/teamportgenerator02.png)
 
-  [![Professional Team Portfolio Generator Demo](./assets/images/Professional Team Portfolio Generator.gif)](https://drive.google.com/file/d/1MwnrSTjCiFXe-007NXffuaaj52QZUNiB/view)
+  [![Generator Demo](./assets/images/ProfGenerator.gif)](https://drive.google.com/file/d/1MwnrSTjCiFXe-007NXffuaaj52QZUNiB/view)
 
-  ![Team Portfolio Generator Input Questions](./assets/images/teamportgenerator00.png)
+  Demonstration of Input fields:
+
+  ![Team Portfolio Generator Input Questions](./assets/images/teamportgenerator00.png "Input Questions")
 
   ## License
   This project is covered by the MIT license. 
